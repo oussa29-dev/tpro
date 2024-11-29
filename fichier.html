@@ -52,6 +52,9 @@
         th {
             background-color: #f2f2f2;
         }
+        .start-city {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -62,16 +65,19 @@
             <!-- Input fields for the distance matrix will be dynamically added here -->
         </div>
         <div class="actions">
-            <button onclick="generateMatrix()">Générer Matrice</button>
             <input type="number" id="matrix-size" placeholder="Nombre de villes" min="2">
+            <button onclick="generateMatrix()">Générer Matrice</button>
             <br><br>
+            <div class="start-city">
+                <label for="start-city">Ville de départ :</label>
+                <input type="number" id="start-city" placeholder="Index de la ville" min="0">
+            </div>
             <button onclick="solveTSP()">Résoudre</button>
         </div>
         <div class="results" id="results">
             <!-- Results will be displayed here -->
         </div>
     </div>
-
     <script src="tsp.js"></script>
 </body>
 </html>
