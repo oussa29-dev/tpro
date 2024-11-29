@@ -75,7 +75,7 @@ function nearestNeighbor(distanceMatrix, start = 0) {
     return { path, totalCost };
 }
 
-function bruteForceTSP(distanceMatrix) {
+function bruteForceTSP(distanceMatrix, start = 0) {
     const n = distanceMatrix.length;
 
     function permutations(arr) {
@@ -92,7 +92,7 @@ function bruteForceTSP(distanceMatrix) {
         return result;
     }
 
-    const cities = Array.from({ length: n }, (_, i) => i);
+    const cities = Array.from({ length: n }, (_, i) => i).filter(city => city !== start);
     const allPermutations = permutations(cities);
 
     let minCost = Infinity;
@@ -100,14 +100,14 @@ function bruteForceTSP(distanceMatrix) {
 
     for (const perm of allPermutations) {
         let currentCost = 0;
-        for (let i = 0; i < perm.length - 1; i++) {
-            currentCost += distanceMatrix[perm[i]][perm[i + 1]];
+        let currentPath = [start, ...perm, start];
+        for (let i = 0; i < currentPath.length - 1; i++) {
+            currentCost += distanceMatrix[currentPath[i]][currentPath[i + 1]];
         }
-        currentCost += distanceMatrix[perm[perm.length - 1]][perm[0]];
 
         if (currentCost < minCost) {
             minCost = currentCost;
-            bestPath = [...perm, perm[0]];
+            bestPath = currentPath;
         }
     }
 
@@ -116,8 +116,15 @@ function bruteForceTSP(distanceMatrix) {
 
 function solveTSP() {
     const size = parseInt(document.getElementById("matrix-size").value);
+    const startCity = parseInt(document.getElementById("start-city").value);
+
     if (isNaN(size) || size < 2) {
         alert("Veuillez entrer un nombre valide (≥ 2).");
+        return;
+    }
+
+    if (isNaN(startCity) || startCity < 0 || startCity >= size) {
+        alert(`Veuillez entrer une ville de départ valide (entre 0 et ${size - 1}).`);
         return;
     }
 
@@ -125,11 +132,11 @@ function solveTSP() {
     if (!distanceMatrix) return;
 
     // Measure execution time for heuristic
-    const heuristicTiming = measureExecutionTime(nearestNeighbor, distanceMatrix);
+    const heuristicTiming = measureExecutionTime(nearestNeighbor, distanceMatrix, startCity);
     const heuristicResult = heuristicTiming.result;
 
     // Measure execution time for brute force
-    const exactTiming = measureExecutionTime(bruteForceTSP, distanceMatrix);
+    const exactTiming = measureExecutionTime(bruteForceTSP, distanceMatrix, startCity);
     const exactResult = exactTiming.result;
 
     const resultsDiv = document.getElementById("results");
